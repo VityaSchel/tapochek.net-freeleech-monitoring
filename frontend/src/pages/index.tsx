@@ -58,20 +58,18 @@ export function HomePage() {
         throw new Error('PushManager не поддерживается')
       }
       if (subscribed) {
-        const registration = await navigator.serviceWorker.ready
         const subscription = await registration.pushManager.getSubscription()
-        if (!subscription) {
-          throw new Error('Подписка не найдена')
+        if (subscription) {
+          const res = await fetch('/push-subscription', {
+            method: 'DELETE',
+            body: JSON.stringify(subscription),
+            headers: { 'Content-Type': 'application/json' }
+          })
+          if(res.status !== 200) {
+            throw new Error('Ошибка при отписке')
+          }
+          await subscription.unsubscribe()
         }
-        const res = await fetch('/push-subscription', {
-          method: 'DELETE',
-          body: JSON.stringify(subscription),
-          headers: { 'Content-Type': 'application/json' }
-        })
-        if(res.status !== 200) {
-          throw new Error('Ошибка при отписке')
-        }
-        await subscription.unsubscribe()
         setSubscribed(false)
       } else {
         const sub = await registration.pushManager.subscribe({
