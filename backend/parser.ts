@@ -64,7 +64,7 @@ export async function parseBonusPage() {
     })
   const $ = cheerio.load(response)
 
-  const bonusesLeft = 0//Number($('#freeleech_bank').text().trim())
+  const bonusesLeft = Number($('#freeleech_bank').text().trim())
   const contributorsRows = $('#mec_freeleech_bank').find('tr').toArray().slice(1)
   const contributors = contributorsRows.map(row => ({ name: $(row.children[0]).text(), contribution: Number($(row.children[1]).text().trim()) }))
 
