@@ -26,7 +26,7 @@ export function HomePage() {
 
   React.useEffect(() => {
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/worker/index.js').then((reg) => {
+      navigator.serviceWorker.register('/worker/index.js?t=' + Date.now()).then((reg) => {
         console.log('Service Worker registered:', reg)
         reg.pushManager.getSubscription().then((sub) => {
           if (sub) {
