@@ -60,9 +60,10 @@ export function HomePage() {
       if (subscribed) {
         const subscription = await registration.pushManager.getSubscription()
         if (subscription) {
-          const res = await fetch('/push-subscription', {
+          const res = await fetch('/push-subscription?' + new URLSearchParams({
+            endpoint: subscription.endpoint
+          }), {
             method: 'DELETE',
-            body: JSON.stringify(subscription),
             headers: { 'Content-Type': 'application/json' }
           })
           if(res.status !== 200) {
