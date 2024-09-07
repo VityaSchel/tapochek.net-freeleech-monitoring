@@ -1,0 +1,22 @@
+{
+  "name": "tapochek-freeleech-backend",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun index.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/cookie": "^0.6.0",
+    "@types/lodash": "^4.17.7"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "cookie": "^0.6.0",
+    "iconv-lite": "^0.6.3",
+    "lodash": "^4.17.21"
+  }
+}
