@@ -21,7 +21,7 @@ if (!webPushPublicKey) {
 
 export function HomePage() {
   const [subscribed, setSubscribed] = React.useState(false)
-  const [loading, setLoading] = React.useState(false)
+  const [loading, setLoading] = React.useState(true)
   const [registration, setRegistration] = React.useState<ServiceWorkerRegistration | null>(null)
 
   React.useEffect(() => {
@@ -32,15 +32,19 @@ export function HomePage() {
           if (sub) {
             setSubscribed(true)
           }
-        })
+        }).finally(() => setLoading(false))
         setRegistration(reg)
       }).catch((error) => {
         console.error('Service Worker registration failed:', error)
+        setLoading(false)
       })
+    } else {
+      setLoading(false)
     }
   }, [])
 
   const handleClick = async () => {
+    if(loading) return
     if (registration === null) {
       alert('Ваш браузер не поддерживает push-уведомления, воспользуйтесь Telegram ботом')
       return
