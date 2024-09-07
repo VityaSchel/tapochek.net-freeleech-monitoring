@@ -177,4 +177,4 @@ dist
 db.json
 telegram-subscribers.txt
 telegram-subscribers.log
-push-subscribers.txt
+push-subscribers.json
