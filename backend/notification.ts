@@ -44,7 +44,7 @@ export async function notifyBotSubscribers(text: string) {
     await new Promise(resolve => setTimeout(resolve, interval))
   }
 
-  console.log('Рассылка завершена. Разослано сообщений:', sent, 'Остановлено:', blocked, 'Ошибок всего:', errors)
+  console.log('Рассылка сообщений завершена. Разослано сообщений:', sent, 'Остановлено:', blocked, 'Ошибок всего:', errors)
 }
 
 const webPushEmail = process.env.WEB_PUSH_EMAIL
@@ -102,5 +102,5 @@ export async function notifyPushSubscribers({ title, text, url }: {
       errors++
     }
   }
-  console.log(`Sent ${sent + errors} notifications: ${sent} success, ${errors} errors`)
+  console.log(`Рассылка пушей завершена. Разослано уведомлений: ${sent} Ошибок: ${errors}`)
 }
