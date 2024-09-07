@@ -84,4 +84,11 @@ const server = Bun.serve({
 
 console.log(`Listening on localhost:${server.port}`);
 
-parseBonusPage()
+while(true) {
+  try {
+    await parseBonusPage()
+  } catch(e) {
+    console.error('Error while parsing', e)
+  }
+  await new Promise(resolve => setTimeout(resolve, 60 * 60 * 1000))
+}

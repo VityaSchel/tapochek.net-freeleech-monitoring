@@ -5,6 +5,7 @@ import iconv from 'iconv-lite'
 import * as cheerio from 'cheerio'
 import { notifyBotSubscribers } from './notification'
 import { sendMessage } from './telegram'
+import { spawn } from 'bun'
 
 function toBuffer(arrayBuffer: ArrayBuffer): Buffer {
   const buffer = Buffer.alloc(arrayBuffer.byteLength);
@@ -86,8 +87,37 @@ export async function parseBonusPage() {
     db.isFreeleech = bonusesLeft === 0
     db.bonusesLeft = bonusesLeft
     await fs.writeFile(__dirname + '/db.json', JSON.stringify(db))
+    await updateFrontend(bonusesLeft)
   } else {
     console.error(response)
     await sendMessage(TELEGRAM_ADMIN_USER_ID, 'Failed to parse bonuses left')
   }
+}
+
+export async function updateFrontend(bonusesLeft: number) {
+  const FRONTEND_ENV_PATH = process.env.FRONTEND_ENV_PATH
+  const FRONTEND_ROOT = process.env.FRONTEND_ROOT
+  if (!FRONTEND_ENV_PATH || !FRONTEND_ROOT) {
+    throw new Error('Fill .env')
+  }
+  const frontendEnv = (await fs.readFile(FRONTEND_ENV_PATH, 'utf-8')).split('\n')
+  const index = frontendEnv.findIndex((line, index) => {
+    if (line.startsWith('VITE_BONUSES=')) {
+      return true
+    }
+  })
+  if (index === -1) {
+    throw new Error('VITE_BONUSES not found')
+  }
+  frontendEnv[index] = `VITE_BONUSES=${150000 - bonusesLeft}`
+  await fs.writeFile(FRONTEND_ENV_PATH, frontendEnv.join('\n'))
+
+  await new Promise<void>(resolve => {
+    spawn(['node_modules/.bin/vite', 'build'], { 
+      cwd: FRONTEND_ROOT,
+      onExit() {
+        resolve()
+      }
+    })
+  })
 }
