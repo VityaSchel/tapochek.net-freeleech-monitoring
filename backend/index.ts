@@ -30,7 +30,12 @@ const server = Bun.serve({
         if (!body.success) {
           return new Response(null, { status: 400 })
         }
-        let subscribersSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+        let subscribersSerialized: string
+        try {
+          subscribersSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+        } catch(e) {
+          subscribersSerialized = '[]'
+        }
         if(subscribersSerialized.trim() === '') {
           subscribersSerialized = '[]'
         }
@@ -47,7 +52,12 @@ const server = Bun.serve({
         const url = new URL(request.url)
         const endpoint = await z.string().url().safeParseAsync(url.searchParams.get('endpoint'))
         if (endpoint.success) {
-          let subscribersSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+          let subscribersSerialized: string
+          try {
+            subscribersSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+          } catch(e) {
+            subscribersSerialized = '[]'
+          }
           if (subscribersSerialized.trim() === '') {
             subscribersSerialized = '[]'
           }

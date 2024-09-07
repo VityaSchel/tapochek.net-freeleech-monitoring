@@ -78,7 +78,12 @@ export async function notifyPushSubscribers({ title, text, url }: {
   text: string
   url: string
 }) {
-  const subscriptionsSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+  let subscriptionsSerialized: string
+  try {
+    subscriptionsSerialized = await fs.readFile(__dirname + '/push-subscribers.json', 'utf-8')
+  } catch (e) {
+    subscriptionsSerialized = '[]'
+  }
   const subscriptions = JSON.parse(subscriptionsSerialized)
   let errors = 0, sent = 0
   for (const subscription of subscriptions) {
