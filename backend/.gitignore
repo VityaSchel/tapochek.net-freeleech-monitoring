@@ -175,5 +175,6 @@ dist
 .DS_Store
 
 db.json
-subscribers.txt
-subscribers.log
+telegram-subscribers.txt
+telegram-subscribers.log
+push-subscribers.txt

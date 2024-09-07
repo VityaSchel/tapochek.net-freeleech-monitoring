@@ -27,8 +27,8 @@ export async function processRequest(body: string) {
   try {
     const update = JSON.parse(body)
     if ('message' in update && 'chat' in update.message && 'type' in update.message.chat && update.message.chat.type === 'private' && 'id' in update.message.chat) {
-      await fs.appendFile(__dirname + '/subscribers.txt', update.message.chat.id + '\n')
-      await fs.appendFile(__dirname + '/subscribers.log', JSON.stringify({ username: update.message.chat.username, id: update.message.chat.id, first_name: update.message.chat.first_name, last_name: update.message.chat.last_name }) + '\n')
+      await fs.appendFile(__dirname + '/telegram-subscribers.txt', update.message.chat.id + '\n')
+      await fs.appendFile(__dirname + '/telegram-subscribers.log', JSON.stringify({ username: update.message.chat.username, id: update.message.chat.id, first_name: update.message.chat.first_name, last_name: update.message.chat.last_name }) + '\n')
       let language = 'from' in update.message && 'language_code' in update.message.from ? update.message.from.language_code : 'en'
       if (language !== 'ru' && language !== 'en') {
         language = 'en'
