@@ -1,4 +1,5 @@
 import fs from 'fs/promises'
+import path from 'path'
 import _ from 'lodash'
 import cookie from 'cookie'
 import iconv from 'iconv-lite'
@@ -95,12 +96,11 @@ export async function parseBonusPage() {
 }
 
 export async function updateFrontend(bonusesLeft: number) {
-  const FRONTEND_ENV_PATH = process.env.FRONTEND_ENV_PATH
   const FRONTEND_ROOT = process.env.FRONTEND_ROOT
-  if (!FRONTEND_ENV_PATH || !FRONTEND_ROOT) {
+  if (!FRONTEND_ROOT) {
     throw new Error('Fill .env')
   }
-  const frontendEnv = (await fs.readFile(FRONTEND_ENV_PATH, 'utf-8')).split('\n')
+  const frontendEnv = (await fs.readFile(path.resolve(FRONTEND_ROOT, '.env'), 'utf-8')).split('\n')
   const index = frontendEnv.findIndex((line, index) => {
     if (line.startsWith('VITE_BONUSES=')) {
       return true
@@ -110,10 +110,10 @@ export async function updateFrontend(bonusesLeft: number) {
     throw new Error('VITE_BONUSES not found')
   }
   frontendEnv[index] = `VITE_BONUSES=${150000 - bonusesLeft}`
-  await fs.writeFile(FRONTEND_ENV_PATH, frontendEnv.join('\n'))
+  await fs.writeFile(path.resolve(FRONTEND_ROOT, '.env'), frontendEnv.join('\n'))
 
   await new Promise<void>(resolve => {
-    spawn(['node_modules/.bin/vite', 'build'], { 
+    spawn([path.resolve(FRONTEND_ROOT, './node_modules/.bin/vite'), 'build'], { 
       cwd: FRONTEND_ROOT,
       onExit() {
         resolve()
