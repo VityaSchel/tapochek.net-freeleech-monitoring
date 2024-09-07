@@ -4,7 +4,7 @@ import _ from 'lodash'
 import cookie from 'cookie'
 import iconv from 'iconv-lite'
 import * as cheerio from 'cheerio'
-import { notifyBotSubscribers } from './notification'
+import { notifyBotSubscribers, notifyPushSubscribers } from './notification'
 import { sendMessage } from './telegram'
 import { spawn } from 'bun'
 
@@ -76,7 +76,12 @@ export async function parseBonusPage() {
         const text = '❗️ FREELECH STARTED ❗️\n❗️ НАЧАЛСЯ ФРИЛИЧ ❗️\n🚀 https://tapochek.net 🚀'
         const result = await sendMessage(TELEGRAM_CHANNEL_ID, text)
         if (result.ok) {
-          await notifyBotSubscribers(text)
+          notifyBotSubscribers(text).catch(e => console.error('Failed to notify bot subscribers', e)),
+          notifyPushSubscribers({
+            title: '🚀 FREELEECH ALERT 🚀',
+            text: 'Начался фрилич на tapochek.net!!!',
+            url: 'https://tapochek.net'
+          }).catch(e => console.error('Failed to notify push subscribers', e))
         }
       }
     } else {
