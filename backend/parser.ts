@@ -69,9 +69,10 @@ export async function parseBonusPage() {
   const bonusesLeft = Number($('#freeleech_bank').text().trim())
   const contributorsRows = $('#mec_freeleech_bank').find('tr').toArray().slice(1)
   const contributors = contributorsRows.map(row => ({ name: $(row.children[0]).text(), contribution: Number($(row.children[1]).text().trim()) }))
+  const isFreeleech = $('h1.tCenter').toArray().some(h1 => $(h1).text().includes('До окончания фрилича осталось'))
 
   if (Number.isSafeInteger(bonusesLeft)) {
-    if (bonusesLeft === 0) {
+    if (isFreeleech) {
       if(db.isFreeleech === false) {
         const text = '❗️ FREELECH STARTED ❗️\n❗️ НАЧАЛСЯ ФРИЛИЧ ❗️\n🚀 https://tapochek.net 🚀'
         const result = await sendMessage(TELEGRAM_CHANNEL_ID, text)
@@ -90,7 +91,7 @@ export async function parseBonusPage() {
       }
     }
     db.contributors = contributors
-    db.isFreeleech = bonusesLeft === 0
+    db.isFreeleech = isFreeleech
     db.bonusesLeft = bonusesLeft
     await fs.writeFile(__dirname + '/db.json', JSON.stringify(db))
     await updateFrontend(bonusesLeft)
